@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Navify | Campus Navigation</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  </head>
+  <body>
+    <div class="auth-overlay" id="authOverlay">
+      <div class="auth-panel">
+        <h2>Access Required</h2>
+        <p>Notice: Navify is exclusively for students and facility personnel only. If you are a visitor, please contact the nearest staff of the campus.</p>
+        <label for="accessCode">Enter code:</label>
+        <input id="accessCode" type="text" placeholder="e.g. 67-67-67" />
+        <button class="primary-btn" id="accessSubmit" type="button">Enter Navify</button>
+        <p class="auth-error" id="authError">Incorrect code. Please try again.</p>
+      </div>    
+    </div>
+
+    <div class="page-shell" id="pageShell" hidden>
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">N</div>
+          <div>
+            <h1>Navify</h1>
+            <p>Campus navigation placeholder</p>
+          </div>
+        </div>
+        <nav class="topnav">
+          <a href="#explore">Explore</a>
+          <a href="#guide">Guide</a>
+          <a href="#about">About</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <span class="eyebrow">UI-first campus map concept</span>
+            <h2>Find your way around campus with calm, clear direction.</h2>
+            <p>Navify is a simple placeholder experience for learning how a campus navigation site can feel modern, welcoming, and easy to use.</p>
+            <div class="hero-actions">
+              <button class="primary-btn" type="button">Start exploring</button>
+              <button class="ghost-btn" type="button">View guide</button>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <div class="planner-panel">
+              <div class="planner-header">
+                <h3>Plan your route</h3>
+                <p>Choose a starting point and destination. The experience will switch between outdoor and indoor campus views.</p>
+              </div>
+
+              <div class="planner-step">
+                <label for="startOptions">1. Select where you are right now</label>
+                <div class="chip-group" id="startOptions"></div>
+                <button class="gps-btn" id="gpsButton" type="button">Use current location (GPS)</button>
+                <p class="status-message" id="gpsStatus">GPS is inactive. Choose a starting point manually.</p>
+              </div>
+
+              <div class="planner-step">
+                <label for="destinationOptions">2. Select where you want to go</label>
+                <div class="place-list" id="destinationOptions"></div>
+              </div>
+
+              <div class="planner-step route-summary">
+                <h4 id="routeTitle">Route preview</h4>
+                <p id="routeText">Choose a starting point and destination to preview the path.</p>
+              </div>
+
+              <div class="planner-step map-preview">
+                <div class="map-mode-banner" id="mapMode">Outdoor map selected</div>
+                <div class="floor-switcher" id="floorSwitcher"></div>
+                <div class="route-map" id="mapContainer"></div>
+                <div class="room-list" id="roomList"></div>
+                <div class="room-details" id="roomDetails">Select a room to see its short description.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="search-panel" id="explore">
+          <h3 id="guide">Quick guide</h3>
+          <div class="search-box">
+            <span>🔎</span>
+            <input id="searchInput" type="text" placeholder="Search for a building, service, or spot" />
+          </div>
+          <p id="searchStatus">Try searching for a building or service.</p>
+
+          <div class="cards-grid">
+            <article class="info-card">
+              <h3>Library</h3>
+              <p>Quiet study zones, printing stations, and student help desks.</p>
+              <span id="hours-library">Checking hours...</span>
+            </article>
+
+            <article class="info-card">
+              <h3>Cafeteria</h3>
+              <p>Daily meals, coffee, and a simple place to recharge between classes.</p>
+              <span id="hours-cafeteria">Checking hours...</span>
+            </article>
+
+            <article class="info-card">
+              <h3>Registrar</h3>
+              <p>Administrative support, enrollment, and student records assistance.</p>
+              <span id="hours-registrar">Checking hours...</span>
+            </article>
+
+            <article class="info-card">
+              <h3>Faculty Office</h3>
+              <p>Faculty consultation, department support, and academic guidance.</p>
+              <span id="hours-faculty">Checking hours...</span>
+            </article>
+
+            <article class="info-card">
+              <h3>Science Lab</h3>
+              <p>Hands-on learning spaces with modern equipment and study support.</p>
+              <span>Lab access by booking</span>
+            </article>
+
+            <article class="info-card">
+              <h3>Arts Hall</h3>
+              <p>Workshops, exhibitions, and creative spaces for campus communities.</p>
+              <span>Gallery events weekly</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="about-card" id="about">
+          <h3>Why this layout works for beginners</h3>
+          <p>This starter project introduces simple HTML structure, CSS styling, and a small JavaScript interaction. You can learn how sections, spacing, color, and search filtering work together without needing a mapping library yet.</p>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
