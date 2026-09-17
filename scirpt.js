@@ -262,9 +262,10 @@ function initMap() {
     preferCanvas: true
   }).setView(campusCenter, mapDefaults.zoom);
 
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     maxZoom: 19,
-    attribution: 'Tiles &copy; Esri | Source: Esri, OpenStreetMap contributors, and the GIS User Community'
+    subdomains: 'abcd',
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
   }).addTo(campusMap);
 
   L.circleMarker(gatePoint, {
