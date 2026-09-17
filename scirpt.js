@@ -262,10 +262,10 @@ function initMap() {
     preferCanvas: true
   }).setView(campusCenter, mapDefaults.zoom);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    subdomains: 'abcd',
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+    subdomains: 'abc',
+    attribution: '&copy; OpenStreetMap contributors, Tiles style by HOT OSM'
   }).addTo(campusMap);
 
   L.circleMarker(gatePoint, {
