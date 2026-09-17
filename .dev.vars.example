@@ -1,0 +1,3 @@
+# Local Wrangler secrets. Copy this file to .dev.vars and replace placeholders locally.
+NAVIFY_ACCESS_CODES=replace-with-local-codes
+NAVIFY_SESSION_SECRET=replace-with-a-long-random-local-secret
