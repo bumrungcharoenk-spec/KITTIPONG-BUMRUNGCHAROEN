@@ -6,11 +6,7 @@
     <title>Navify | Campus Navigation</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   </head>
   <body>
     <div class="auth-overlay" id="authOverlay">
@@ -41,20 +37,20 @@
       </header>
 
       <main>
-        <section class="hero">
+        <section class="hero" id="homeScreen">
           <div>
             <span class="eyebrow">UI-first campus map concept</span>
             <h2>Find your way around campus with calm, clear direction.</h2>
             <p>Navify is a simple placeholder experience for learning how a campus navigation site can feel modern, welcoming, and easy to use.</p>
             <div class="hero-actions">
-              <button class="primary-btn" type="button">Start exploring</button>
-              <button class="ghost-btn" type="button">View guide</button>
+              <button class="primary-btn" id="startExploringButton" type="button">Start exploring</button>
             </div>
           </div>
 
           <div class="hero-card">
             <div class="planner-panel">
               <div class="planner-header">
+                <button class="back-btn" id="backHomeButton" type="button">Back to home</button>
                 <h3>Plan your route</h3>
                 <p>Choose a starting point and destination. The experience will switch between outdoor and indoor campus views.</p>
               </div>

@@ -287,6 +287,20 @@ button:hover {
   font-size: 1.05rem;
 }
 
+.back-btn {
+  width: fit-content;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.back-btn:hover {
+  color: var(--accent);
+}
+
 .planner-header p {
   margin: 0;
   color: var(--muted);
@@ -592,5 +606,62 @@ button:hover {
 
   .map-labels {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Home -> Explore view transition */
+.page-shell:not(.explore-mode) .hero-card,
+.page-shell:not(.explore-mode) .search-panel,
+.page-shell:not(.explore-mode) .about-card {
+  display: none;
+}
+
+.page-shell.explore-mode .hero {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.page-shell.explore-mode #homeScreen > div:first-child {
+  display: none;
+}
+
+.page-shell.explore-mode .hero-card {
+  display: block;
+  width: 100%;
+  animation: exploreIn 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.page-shell.explore-mode .search-panel,
+.page-shell.explore-mode .about-card {
+  display: block;
+  animation: exploreIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.page-shell.explore-mode .route-map {
+  min-height: 620px;
+}
+
+.page-shell.explore-mode #mapContainer {
+  height: 600px;
+}
+
+@keyframes exploreIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell.explore-mode .route-map {
+    min-height: 430px;
+  }
+
+  .page-shell.explore-mode #mapContainer {
+    height: 410px;
   }
 }

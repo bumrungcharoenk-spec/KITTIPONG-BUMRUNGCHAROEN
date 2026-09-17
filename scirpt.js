@@ -58,13 +58,13 @@ const roomDescriptions = {
   'Seminar Room': 'Small meeting space for presentations, tutoring, and group discussion.'
 };
 
-const allowedCodes = ['25-0407-868', '123-456-789', '10-20-30'];
-
 const authOverlay = document.getElementById('authOverlay');
 const pageShell = document.getElementById('pageShell');
 const accessCodeInput = document.getElementById('accessCode');
 const accessSubmit = document.getElementById('accessSubmit');
 const authError = document.getElementById('authError');
+const startExploringButton = document.getElementById('startExploringButton');
+const backHomeButton = document.getElementById('backHomeButton');
 
 const mapContainer = document.getElementById('mapContainer');
 const startOptions = document.getElementById('startOptions');
@@ -77,6 +77,8 @@ const mapMode = document.getElementById('mapMode');
 const floorSwitcher = document.getElementById('floorSwitcher');
 const roomList = document.getElementById('roomList');
 const roomDetails = document.getElementById('roomDetails');
+const searchInput = document.getElementById('searchInput');
+const searchStatus = document.getElementById('searchStatus');
 
 let selectedStart = null;
 let selectedDestination = null;
@@ -130,6 +132,28 @@ function renderDestinationOptions() {
 
     destinationOptions.appendChild(button);
   });
+}
+
+function renderGuideCards() {
+  const cards = Array.from(document.querySelectorAll('.info-card'));
+  const query = (searchInput?.value || '').trim().toLowerCase();
+  let visibleCount = 0;
+
+  cards.forEach((card) => {
+    const text = card.textContent.toLowerCase();
+    const matches = !query || text.includes(query);
+    card.classList.toggle('hidden', !matches);
+
+    if (matches) {
+      visibleCount += 1;
+    }
+  });
+
+  if (searchStatus) {
+    searchStatus.textContent = query
+      ? `Showing ${visibleCount} result${visibleCount === 1 ? '' : 's'} for "${searchInput.value.trim()}".`
+      : 'Try searching for a building or service.';
+  }
 }
 
 function renderFloorSwitcher() {
@@ -238,9 +262,10 @@ function initMap() {
     preferCanvas: true
   }).setView(campusCenter, mapDefaults.zoom);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
+    subdomains: 'abcd',
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
   }).addTo(campusMap);
 
   L.circleMarker(gatePoint, {
@@ -304,20 +329,64 @@ function updateBuildingHours() {
   });
 }
 
-function handleAccess() {
+async function handleAccess() {
   const enteredCode = accessCodeInput.value.trim();
-  if (allowedCodes.includes(enteredCode)) {
-    authError.classList.remove('show');
-    authOverlay.style.opacity = '0';
-    authOverlay.style.pointerEvents = 'none';
-    pageShell.hidden = false;
-    pageShell.style.display = 'block';
-    pageShell.classList.add('is-visible');
-    updateBuildingHours();
-    initMap();
-  } else {
+  if (!enteredCode) {
+    authError.textContent = 'Please enter your access code.';
     authError.classList.add('show');
+    return;
   }
+
+  accessSubmit.disabled = true;
+  authError.classList.remove('show');
+
+  try {
+    const response = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ code: enteredCode })
+    });
+
+    if (response.ok) {
+      authOverlay.style.opacity = '0';
+      authOverlay.style.pointerEvents = 'none';
+      pageShell.hidden = false;
+      pageShell.style.display = 'block';
+      pageShell.classList.add('is-visible');
+      updateBuildingHours();
+      return;
+    }
+
+    authError.textContent = response.status === 429
+      ? 'Too many attempts. Please wait a minute and try again.'
+      : 'Incorrect code. Please try again.';
+    authError.classList.add('show');
+  } catch (error) {
+    authError.textContent = 'The access service is unavailable. Start Navify through the server and try again.';
+    authError.classList.add('show');
+  } finally {
+    accessSubmit.disabled = false;
+  }
+}
+
+function openExploreView() {
+  pageShell.classList.add('explore-mode');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  requestAnimationFrame(() => {
+    initMap();
+    setTimeout(() => {
+      if (campusMap) {
+        campusMap.invalidateSize();
+      }
+    }, 120);
+  });
+}
+
+function closeExploreView() {
+  pageShell.classList.remove('explore-mode');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 gpsButton.addEventListener('click', () => {
@@ -327,7 +396,13 @@ gpsButton.addEventListener('click', () => {
   updateRoute();
 });
 
+if (searchInput) {
+  searchInput.addEventListener('input', renderGuideCards);
+}
+
 accessSubmit.addEventListener('click', handleAccess);
+startExploringButton.addEventListener('click', openExploreView);
+backHomeButton.addEventListener('click', closeExploreView);
 accessCodeInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     handleAccess();
@@ -340,6 +415,7 @@ if (!pageShell.hidden) {
 
 renderStartOptions();
 renderDestinationOptions();
+renderGuideCards();
 updateRoute();
 updateBuildingHours();
 setInterval(updateBuildingHours, 60000);
