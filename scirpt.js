@@ -132,7 +132,7 @@ const searchStatus = document.getElementById('searchStatus');
 let selectedStart = null;
 let selectedDestination = null;
 let routeNodePath = [];
-let currentRouteLine = null;
+let selectedRouteSegment = null;
 
 // Manually set the default map position and marker locations here.
 const mapDefaults = {
@@ -329,7 +329,12 @@ function renderIndoorMap(route = []) {
     nodeCoordinates[getRoomDoorId(room.id)] = [x, y];
   });
 
-  const points = route.map((node) => nodeCoordinates[node]).filter(Boolean).map(([x, y]) => `${x},${y}`).join(' ');
+  const routeSegments = route.slice(0, -1).map((node, index) => {
+    const start = nodeCoordinates[node];
+    const end = nodeCoordinates[route[index + 1]];
+    if (!start || !end) return '';
+    return `<path class="route-segment ${selectedRouteSegment === index ? 'active' : ''}" data-segment-index="${index}" d="M ${start[0]},${start[1]} L ${end[0]},${end[1]}" tabindex="0" role="button" aria-label="Route segment ${index + 1}"></path>`;
+  }).join('');
   mapContainer.innerHTML = `
     <svg class="indoor-floorplan" viewBox="0 0 1000 560" role="img" aria-label="Engineering Building third floor interactive map">
       <rect class="floor-shell" x="44" y="38" width="912" height="470" rx="12"></rect>
@@ -341,7 +346,7 @@ function renderIndoorMap(route = []) {
       <text class="map-label" x="888" y="420" text-anchor="middle">EAST STAIRS</text>
       ${northMarkup}${southMarkup}${eastMarkup}
       <circle class="hall-node" cx="500" cy="280" r="9"></circle>
-      <path class="route-line" d="${points ? `M ${points.replaceAll(' ', ' L ')}` : ''}" aria-hidden="true"></path>
+      <g class="route-layer" aria-label="Highlighted route">${routeSegments}</g>
       <text class="hall-label" x="500" y="288" text-anchor="middle">MAIN HALL</text>
     </svg>`;
 
@@ -352,6 +357,21 @@ function renderIndoorMap(route = []) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         selectRoom();
+      }
+    });
+  });
+
+  mapContainer.querySelectorAll('.route-segment').forEach((segment) => {
+    const selectSegment = () => {
+      selectedRouteSegment = Number(segment.dataset.segmentIndex);
+      renderIndoorMap(routeNodePath);
+      document.querySelectorAll('.route-step').forEach((step) => step.classList.toggle('active', Number(step.dataset.segmentIndex) === selectedRouteSegment));
+    };
+    segment.addEventListener('click', selectSegment);
+    segment.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        selectSegment();
       }
     });
   });
@@ -412,9 +432,19 @@ function describeNode(node) {
 
 function renderRouteInstructions(path) {
   routeSteps.innerHTML = '';
-  path.forEach((node) => {
+  path.slice(0, -1).forEach((node, index) => {
     const item = document.createElement('li');
-    item.textContent = describeNode(node);
+    item.className = `route-step ${selectedRouteSegment === index ? 'active' : ''}`;
+    item.dataset.segmentIndex = index;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = describeNode(path[index + 1]);
+    button.addEventListener('click', () => {
+      selectedRouteSegment = index;
+      renderIndoorMap(routeNodePath);
+      renderRouteInstructions(routeNodePath);
+    });
+    item.appendChild(button);
     routeSteps.appendChild(item);
   });
 }
@@ -481,6 +511,7 @@ function updateRoute() {
 
   const path = findPath(selectedStart.id, selectedDestination.id);
   routeNodePath = path;
+  selectedRouteSegment = null;
   routeTitle.textContent = `Route: ${selectedStart.label} → ${selectedDestination.label}`;
   routeText.textContent = path.length ? 'A* preview found a walkable route through the main hallway.' : 'No connected route is available for this selection yet.';
   gpsStatus.textContent = 'Indoor route mode is active. Distances are currently schematic.';
