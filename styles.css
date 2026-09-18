@@ -609,6 +609,155 @@ button:hover {
   }
 }
 
+.location-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.location-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+.location-search input::placeholder {
+  color: var(--muted);
+}
+
+.location-results {
+  display: grid;
+  gap: 6px;
+}
+
+.location-result {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.location-result span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.location-result.active,
+.location-result:hover {
+  border-color: rgba(125, 211, 252, 0.45);
+  background: rgba(125, 211, 252, 0.12);
+}
+
+.indoor-floorplan {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  border-radius: 14px;
+  background: #f4f1e9;
+}
+
+.floor-shell {
+  fill: #fbfaf6;
+  stroke: #b9b3a4;
+  stroke-width: 3;
+}
+
+.hallway {
+  fill: #c9e5d2;
+  stroke: #6eaa86;
+  stroke-width: 3;
+}
+
+.indoor-room rect {
+  fill: #fffdf8;
+  stroke: #4169a1;
+  stroke-width: 4;
+  transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.indoor-room:hover rect,
+.indoor-room:focus rect {
+  fill: #dff2ff;
+  stroke: #1d78b5;
+  outline: none;
+}
+
+.indoor-room.route-room rect {
+  fill: #ffe6a3;
+  stroke: #df8c28;
+}
+
+.indoor-room text {
+  fill: #23344f;
+  font-size: 18px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.floor-title {
+  fill: #273854;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.stairs {
+  fill: #f2cf9b;
+  stroke: #bd7931;
+  stroke-width: 4;
+}
+
+.map-label,
+.hall-label {
+  fill: #43556a;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.hall-node {
+  fill: #e46d4c;
+  stroke: #fff;
+  stroke-width: 4;
+}
+
+.route-line {
+  fill: none;
+  stroke: #e84d6a;
+  stroke-width: 11;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 20;
+  filter: drop-shadow(0 2px 2px rgba(120, 29, 58, 0.3));
+  pointer-events: none;
+}
+
+.route-steps {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 28px;
+  color: var(--muted);
+}
+
+.route-steps li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 /* Home -> Explore view transition */
 .page-shell:not(.explore-mode) .hero-card,
 .page-shell:not(.explore-mode) .search-panel,

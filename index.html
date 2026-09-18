@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Navify | Campus Navigation</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   </head>
   <body>
     <div class="auth-overlay" id="authOverlay">
@@ -52,18 +50,23 @@
               <div class="planner-header">
                 <button class="back-btn" id="backHomeButton" type="button">Back to home</button>
                 <h3>Plan your route</h3>
-                <p>Choose a starting point and destination. The experience will switch between outdoor and indoor campus views.</p>
+                <p>Choose a room or hallway point on the Engineering Building floor plan to preview an indoor route.</p>
               </div>
 
               <div class="planner-step">
-                <label for="startOptions">1. Select where you are right now</label>
+                <label for="startOptions">1. Where are you?</label>
                 <div class="chip-group" id="startOptions"></div>
-                <button class="gps-btn" id="gpsButton" type="button">Use current location (GPS)</button>
-                <p class="status-message" id="gpsStatus">GPS is inactive. Choose a starting point manually.</p>
+                <p class="status-message" id="gpsStatus">Choose a room door, stairwell, or hallway point.</p>
               </div>
 
               <div class="planner-step">
-                <label for="destinationOptions">2. Select where you want to go</label>
+                <label for="destinationOptions">2. Where do you want to go?</label>
+                <div class="location-search">
+                  <span>⌕</span>
+                  <input id="locationSearchInput" type="search" placeholder="Search any room on campus" />
+                </div>
+                <p class="status-message" id="locationSearchStatus">Search rooms by number or building.</p>
+                <div class="location-results" id="locationResults"></div>
                 <div class="place-list" id="destinationOptions"></div>
               </div>
 
@@ -73,11 +76,11 @@
               </div>
 
               <div class="planner-step map-preview">
-                <div class="map-mode-banner" id="mapMode">Outdoor map selected</div>
-                <div class="floor-switcher" id="floorSwitcher"></div>
+                <div class="map-mode-banner" id="mapMode">Indoor map · Engineering Building · Floor 3</div>
                 <div class="route-map" id="mapContainer"></div>
                 <div class="room-list" id="roomList"></div>
                 <div class="room-details" id="roomDetails">Select a room to see its short description.</div>
+                <ol class="route-steps" id="routeSteps"></ol>
               </div>
             </div>
           </div>
