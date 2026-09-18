@@ -12,6 +12,7 @@ const destinations = [
   { id: 'eng-f3-room-324a', label: 'Room 324A', type: 'room', side: 'north', column: 3, description: 'Classroom on the third floor of the Engineering Building.' },
   { id: 'eng-f3-room-324b', label: 'Room 324B', type: 'room', side: 'north', column: 4, description: 'Classroom on the third floor of the Engineering Building.' },
   { id: 'eng-f3-room-323', label: 'Room 323', type: 'room', side: 'east', column: 0, description: 'Classroom beside the east stairwell.' },
+  { id: 'eng-f3-restroom', label: 'Restroom', type: 'restroom', side: 'east-restroom', column: 0, description: 'Restroom located above Room 323 beside the east circulation corridor.' },
   { id: 'eng-f3-room-320a', label: 'Room 320A', type: 'room', side: 'south', column: 0, description: 'Classroom on the south side of the third-floor hallway.' },
   { id: 'eng-f3-room-320b', label: 'Room 320B', type: 'room', side: 'south', column: 1, description: 'Classroom on the south side of the third-floor hallway.' },
   { id: 'eng-f3-room-321a', label: 'Room 321A', type: 'room', side: 'south', column: 2, description: 'Classroom on the south side of the third-floor hallway.' },
@@ -26,13 +27,14 @@ const routeGraph = {
   'eng-f3-east-stairs': ['eng-f3-hall-east'],
   'eng-f3-hall-west': ['eng-f3-west-stairs', 'eng-f3-hall-center', 'eng-f3-room-326-door', 'eng-f3-room-320a-door', 'eng-f3-room-326b-door', 'eng-f3-room-320b-door'],
   'eng-f3-hall-center': ['eng-f3-lobby', 'eng-f3-hall-west', 'eng-f3-hall-east', 'eng-f3-room-326b-door', 'eng-f3-room-325a-door', 'eng-f3-room-324a-door', 'eng-f3-room-321a-door', 'eng-f3-room-321b-door'],
-  'eng-f3-hall-east': ['eng-f3-hall-center', 'eng-f3-east-stairs', 'eng-f3-room-324b-door', 'eng-f3-room-323-door', 'eng-f3-room-322b-door', 'eng-f3-room-322a-door'],
+  'eng-f3-hall-east': ['eng-f3-hall-center', 'eng-f3-east-stairs', 'eng-f3-room-324b-door', 'eng-f3-room-323-door', 'eng-f3-restroom-door', 'eng-f3-room-322b-door', 'eng-f3-room-322a-door'],
   'eng-f3-room-326-door': ['eng-f3-hall-west'],
   'eng-f3-room-326b-door': ['eng-f3-hall-center'],
   'eng-f3-room-325a-door': ['eng-f3-hall-center'],
   'eng-f3-room-324a-door': ['eng-f3-hall-center'],
   'eng-f3-room-324b-door': ['eng-f3-hall-east'],
   'eng-f3-room-323-door': ['eng-f3-hall-east'],
+  'eng-f3-restroom-door': ['eng-f3-hall-east'],
   'eng-f3-room-320a-door': ['eng-f3-hall-west'],
   'eng-f3-room-320b-door': ['eng-f3-hall-west'],
   'eng-f3-room-321a-door': ['eng-f3-hall-center'],
@@ -54,7 +56,7 @@ const navigationCoordinates = {
 
 destinations.forEach((room) => {
   const x = room.side === 'north' ? 150 + room.column * 132 + 62 : room.side === 'south' ? 150 + room.column * 106 + 49 : 828;
-  const y = room.side === 'north' ? 235 : room.side === 'south' ? 335 : 315;
+  const y = room.side === 'north' ? 235 : room.side === 'south' ? 335 : room.side === 'east-restroom' ? 172 : 315;
   navigationCoordinates[getRoomDoorId(room.id)] = [x, y];
 });
 
@@ -304,6 +306,7 @@ function renderIndoorMap(route = []) {
   const northRooms = destinations.filter((room) => room.side === 'north');
   const southRooms = destinations.filter((room) => room.side === 'south');
   const eastRoom = destinations.find((room) => room.side === 'east');
+  const restroom = destinations.find((room) => room.side === 'east-restroom');
   const routeNodes = new Set(route);
   const roomRect = (room, x, y, width, height) => `
     <g class="indoor-room ${routeNodes.has(getRoomDoorId(room.id)) ? 'route-room' : ''}" data-room-id="${room.id}" tabindex="0" role="button" aria-label="${room.label}">
@@ -313,19 +316,20 @@ function renderIndoorMap(route = []) {
 
   const northMarkup = northRooms.map((room, index) => roomRect(room, 150 + index * 132, 70, 124, 145)).join('');
   const southMarkup = southRooms.map((room, index) => roomRect(room, 150 + index * 106, 345, 98, 145)).join('');
-  const eastMarkup = eastRoom ? roomRect(eastRoom, 828, 190, 120, 125) : '';
+  const eastMarkup = eastRoom ? roomRect(eastRoom, 842, 190, 102, 125) : '';
+  const restroomMarkup = restroom ? roomRect(restroom, 842, 70, 102, 102) : '';
 
   const nodeCoordinates = {
     'eng-f3-west-stairs': [105, 280],
     'eng-f3-hall-west': [290, 280],
     'eng-f3-lobby': [500, 280],
     'eng-f3-hall-center': [500, 280],
-    'eng-f3-hall-east': [760, 280],
-    'eng-f3-east-stairs': [900, 405]
+    'eng-f3-hall-east': [806, 280],
+    'eng-f3-east-stairs': [893, 405]
   };
   destinations.forEach((room) => {
-    const x = room.side === 'north' ? 150 + room.column * 132 + 62 : room.side === 'south' ? 150 + room.column * 106 + 49 : 828;
-    const y = room.side === 'north' ? 235 : room.side === 'south' ? 335 : 315;
+    const x = room.side === 'north' ? 150 + room.column * 132 + 62 : room.side === 'south' ? 150 + room.column * 106 + 49 : 842;
+    const y = room.side === 'north' ? 235 : room.side === 'south' ? 335 : room.side === 'east-restroom' ? 172 : 315;
     nodeCoordinates[getRoomDoorId(room.id)] = [x, y];
   });
 
@@ -339,12 +343,13 @@ function renderIndoorMap(route = []) {
     <svg class="indoor-floorplan" viewBox="0 0 1000 560" role="img" aria-label="Engineering Building third floor interactive map">
       <rect class="floor-shell" x="44" y="38" width="912" height="470" rx="12"></rect>
       <text class="floor-title" x="500" y="25" text-anchor="middle">ENGINEERING BUILDING · THIRD FLOOR</text>
-      <rect class="hallway" x="90" y="235" width="820" height="92" rx="18"></rect>
+      <rect class="hallway" x="90" y="242" width="742" height="76" rx="12"></rect>
+      <rect class="hallway east-corridor" x="782" y="70" width="48" height="420" rx="12"></rect>
       <rect class="stairs" x="62" y="70" width="70" height="145" rx="8"></rect>
       <text class="map-label" x="97" y="145" text-anchor="middle" transform="rotate(-90 97 145)">WEST STAIRS</text>
-      <rect class="stairs" x="828" y="345" width="120" height="145" rx="8"></rect>
-      <text class="map-label" x="888" y="420" text-anchor="middle">EAST STAIRS</text>
-      ${northMarkup}${southMarkup}${eastMarkup}
+      <rect class="stairs" x="842" y="345" width="102" height="145" rx="8"></rect>
+      <text class="map-label" x="893" y="420" text-anchor="middle">EAST STAIRS</text>
+      ${northMarkup}${southMarkup}${restroomMarkup}${eastMarkup}
       <circle class="hall-node" cx="500" cy="280" r="9"></circle>
       <g class="route-layer" aria-label="Highlighted route">${routeSegments}</g>
       <text class="hall-label" x="500" y="288" text-anchor="middle">MAIN HALL</text>
